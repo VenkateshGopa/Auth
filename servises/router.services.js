@@ -67,7 +67,6 @@ const services = {
       if(!user) return res.status(403).send({message:"Email not registered"})
       const code = Math.random().toString(36).slice(-6);
       await email(value.email , code);
-      localStorage.setItem('id',user._id);
       await mongo.db.collection('userdetails').updateOne({email:value.email} , {$set:{code: code ,resetpassord: false }})
       res.send({message:"email send successfully"})
       console.log("success")
