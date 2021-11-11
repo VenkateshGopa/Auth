@@ -68,6 +68,7 @@ const services = {
       const code = Math.random().toString(36).slice(-6);
       await email(value.email , code);
       await mongo.db.collection('userdetails').updateOne({email:value.email} , {$set:{code: code ,resetpassord: false }})
+      Window.localStorage.setItem('id', user["_id"]);
       res.send({message:"email send successfully"})
       console.log("success")
     }
