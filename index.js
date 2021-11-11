@@ -5,6 +5,7 @@ const dotenv = require("dotenv");
 const mongo = require("./db/mongo");
 const testrouter = require("./Routes/test");
 const cors = require('cors');
+const port = process.env.PORT || 3000
 
 dotenv.config();
 const app = express();
@@ -36,8 +37,8 @@ const app = express();
     
     app.use(testrouter)
 
-    app.listen(process.env.port, () => {
-      console.log("server is up at port " + process.env.port);
+    app.listen(port, () => {
+      console.log("server is up at port " + port);
     });
 
   } catch (error) {
