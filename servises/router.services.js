@@ -79,7 +79,7 @@ const services = {
     checkcode: async(req, res) =>{
       try{
         const{error , value} = await schema.checkcode.validate(req.body);
-        if(error) return res.status(403).send(error.details[0].message)
+        if(error) return res.status(403).send({error: error.details[0].message})
         const user = await mongo.db.collection('userdetails').findOne({_id: ObjectId(value.id)});
         if(user.code === value["code"]){
             await mongo.db.collection('userdetails').updateOne({_id: ObjectId(value.id)}, {$set:{resetpassord: true}})
