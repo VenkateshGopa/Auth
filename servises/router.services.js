@@ -66,7 +66,7 @@ const services = {
       const user = await mongo.db.collection('userdetails').findOne({email:value.email});
       if(!user) return res.status(403).send({message:"Email not registered"})
       const code = Math.random().toString(36).slice(-6);
-      await email(value.email , code);
+      await email(value.email , `http://localhost:3000/forgotpassword/${user._id}/verification + ${code}`);
       await mongo.db.collection('userdetails').updateOne({email:value.email} , {$set:{code: code ,resetpassord: false }})
       res.send({message:"email send successfully"})
       console.log("success")
