@@ -51,7 +51,7 @@ const services = {
         req.status(403).send({error:"email or passwod invalid"})
      }
      catch(error){
-        res.status(400).send({error});
+        res.status(400).send({error:"email or passwod invalid"});
      }
   },
 
