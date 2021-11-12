@@ -10,13 +10,13 @@ const services = {
   register: async (req, res) => {
     try{
         const {error, value}= await schema.registerSchema.validate(req.body);
-        if(error) return res.status(400).send(error.details[0].message);
+        if(error) return res.status(400).send({error:error.details[0].message});
 
         value.email = value.email.toLowerCase();
 
         // checking weather user already registered or not
         const user = await mongo.db.collection('userdetails').findOne({email:value.email});
-        if(user) return res.status(403).send({message:"Email already registered!"})
+        if(user) return res.status(403).send({error:"Email already registered!"})
 
         //encrypting password
         const salt = await bcrypt.genSalt();
@@ -24,22 +24,22 @@ const services = {
 
         // adding user to database
         await mongo.db.collection('userdetails').insertOne(value);
-        res.status(201).send("registered Succesfully");
+        res.status(201).send({message:"registered Succesfully"});
     }
     catch(error){
-        res.status(400).send(error);
+        res.status(400).send({error});
     }
   },
 
   login: async(req, res) => {
      try{
         const {error, value}= await schema.loginSchema.validate(req.body);
-        if(error) return res.status(403).send(error.details[0].message);
+        if(error) return res.status(403).send({error:error.details[0].message});
 
         value.email = value.email.toLowerCase();
         // checking weather user exists
         const user = await mongo.db.collection('userdetails').findOne({email:value.email});
-        if(!user) return res.status(403).send({message:"Email not registered"})
+        if(!user) return res.status(403).send({error:"Email not registered"})
 
         //checking weather the entered password is correct or not
         const data = await bcrypt.compare(value.password, user.password);
@@ -48,10 +48,10 @@ const services = {
             return res.send({token});
         }
         else
-        req.status(403).send({message:"email or passwod invalid"})
+        req.status(403).send({error:"email or passwod invalid"})
      }
      catch(error){
-        res.status(400).send({message:"email or passwod invalid"});
+        res.status(400).send({error});
      }
   },
 
@@ -64,7 +64,7 @@ const services = {
 
       // checking weather user exists
       const user = await mongo.db.collection('userdetails').findOne({email:value.email});
-      if(!user) return res.status(403).send({message:"Email not registered"})
+      if(!user) return res.status(403).send({error:"Email not registered"})
       const code = Math.random().toString(36).slice(-6);
       await email(value.email , `http://localhost:3000/forgotpassword/${user._id}/verification + ${code}`);
       await mongo.db.collection('userdetails').updateOne({email:value.email} , {$set:{code: code ,resetpassord: false }})
@@ -81,15 +81,14 @@ const services = {
         const{error , value} = await schema.checkcode.validate(req.body);
         if(error) return res.status(403).send(error.details[0].message)
         const user = await mongo.db.collection('userdetails').findOne({_id: ObjectId(value.id)});
-        // if(user.code.split(' ').length === 2) user.code = user.code.split(' ')[1];
         if(user.code === value["code"]){
             await mongo.db.collection('userdetails').updateOne({_id: ObjectId(value.id)}, {$set:{resetpassord: true}})
-            return res.send("done")
+            return res.send({message:" Otp verified"})
         }
-        res.status(403).send("failed")
+        res.status(403).send({error:"Please enter valid Otp"})
       }
       catch (error){
-        res.status(403).send("failed")
+        res.status(403).send({error:"failed to checkcode"})
       }
     },
 
@@ -105,7 +104,7 @@ const services = {
         return res.send({message: "password changed"})
         }
         else{
-            res.send({message:"click the link on the email to reset"})
+            res.send({message:"click the link on the email to reset Password"})
         }
 
     }
