@@ -24,6 +24,7 @@ const services = {
 
         // adding user to database
         await mongo.db.collection('userdetails').insertOne(value);
+        await mongo.db.collection('notes').insertOne({email:value.email, note:""})
         res.status(201).send({message:"registered Succesfully"});
     }
     catch(error){
@@ -88,7 +89,7 @@ const services = {
         res.status(403).send({error:"Please enter valid Otp"})
       }
       catch (error){
-        res.status(403).send({error:"failed to checkcode"})
+        res.status(403).send({error:"failed to verify code"})
       }
     },
 
