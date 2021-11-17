@@ -52,7 +52,7 @@ const services = {
         req.status(403).send({error:"email or passwod invalid"})
      }
      catch(error){
-        res.status(400).send({error:"email or passwod invalid"});
+        res.status(400).send(error);
      }
   },
 
@@ -67,8 +67,9 @@ const services = {
       const user = await mongo.db.collection('userdetails').findOne({email:value.email});
       if(!user) return res.status(403).send({error:"Email not registered"})
       const code = Math.random().toString(36).slice(-6);
-      await email(value.email , `https://flamboyant-mcnulty-6a1292.netlify.app/forgotpassword/${user._id}/verification your One time password - ${code}`);
-      await mongo.db.collection('userdetails').updateOne({email:value.email} , {$set:{code: code ,resetpassord: false }})
+      
+      await email(value.email , `http://localhost:3000/forgotpassword/${user._id}/verification + ${code}`);
+      await mongo.db.collection('userdetails').updateOne({email:value.email} , {$set:{code: code ,resetpassord: false , time:req.body.time} })
       res.send({message:"email send successfully"})
       console.log("success")
     }
@@ -80,7 +81,7 @@ const services = {
     checkcode: async(req, res) =>{
       try{
         const{error , value} = await schema.checkcode.validate(req.body);
-        if(error) return res.status(403).send({error: error.details[0].message})
+        if(error) return res.status(403).send(error.details[0].message)
         const user = await mongo.db.collection('userdetails').findOne({_id: ObjectId(value.id)});
         if(user.code === value["code"]){
             await mongo.db.collection('userdetails').updateOne({_id: ObjectId(value.id)}, {$set:{resetpassord: true}})
@@ -89,7 +90,7 @@ const services = {
         res.status(403).send({error:"Please enter valid Otp"})
       }
       catch (error){
-        res.status(403).send({error:"failed to verify code"})
+        res.status(403).send({error:"Please enter valid Otp"})
       }
     },
 
@@ -107,8 +108,21 @@ const services = {
         else{
             res.send({message:"click the link on the email to reset Password"})
         }
+    },
 
-    }
+    linkvalid: async(req, res) =>{
+      const{error , value} = await schema.linkvalid.validate(req.body);
+      if(error) return res.status(403).send(error.details[0].message)
+      const user = await mongo.db.collection('userdetails').findOne({_id: ObjectId(value.id)});
+
+      if(user.time < req.body.time){
+      return res.send({message:"true"})
+      }
+      else{
+          res.send({message:"link expired"})
+      }
+  }
+
 };
 
 module.exports = services;
