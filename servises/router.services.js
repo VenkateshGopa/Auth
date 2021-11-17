@@ -119,7 +119,7 @@ const services = {
       return res.send({message:"true"})
       }
       else{
-          res.send({message:"link expired"})
+          res.status(400)send({message:"link expired"})
       }
   }
 
