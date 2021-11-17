@@ -102,7 +102,7 @@ const services = {
         if(user.resetpassord === true){
         const salt = await bcrypt.genSalt();
         value.password = await bcrypt.hash(value.password , salt);
-        await mongo.db.collection('userdetails').updateOne({_id: ObjectId(value.id)} , {$set:{password: value.password}, $unset:{code: "" ,resetpassord:""}})
+        await mongo.db.collection('userdetails').updateOne({_id: ObjectId(value.id)} , {$set:{password: value.password}, $unset:{code: "" ,resetpassord:"", time:""}})
         return res.send({message: "password changed"})
         }
         else{
