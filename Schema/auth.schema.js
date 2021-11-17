@@ -27,11 +27,16 @@ const createnewpassword = joi.object({
   id: joi.string().required()
 });
 
+const linkvalid = joi.object({
+  time:joi.required(),
+  id:joi.string().required()
+})
 
 module.exports = {
   registerSchema,
   loginSchema,
   forgetPasswordSchema,
   checkcode,
-  createnewpassword
+  createnewpassword,
+  linkvalid,
 };
