@@ -68,7 +68,7 @@ const services = {
       if(!user) return res.status(403).send({error:"Email not registered"})
       const code = Math.random().toString(36).slice(-6);
       
-      await email(value.email , `<h1>Reset Password</h1> <p>Your Otp Is:</p> <h3>${code}</h3> <p>The below Link to reset your account password is valid only for 30Minutes.</p> 
+      await email(value.email , `<h2>Hello ${user.firstname} ${user.lastname},</h2> <p> A request has been made received to change the password for your account. The below Link to reset your account password is valid only for 30Minutes.</p> <p>Your Otp Is:</p> <h3>${code}</h3>  
       <span><a href="https://flamboyant-mcnulty-6a1292.netlify.app/forgotpassword/${user._id}/verification">Click here</a> to reset your password</span>
       <P>(or) Use the below link</p>
       <p>https://flamboyant-mcnulty-6a1292.netlify.app/forgotpassword/${user._id}/verification</p>`);
