@@ -13,7 +13,7 @@ const mailer = (email, code) => {
     var mailOptions = {
       from: "packatest@gmail.com",
       to: email,
-      subject: "Sending Email using Node.js",
+      subject: "Password Reset link",
       // text: 'That was easy!'
       html: `<p>${code} </p>`,
     };
