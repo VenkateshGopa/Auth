@@ -68,7 +68,10 @@ const services = {
       if(!user) return res.status(403).send({error:"Email not registered"})
       const code = Math.random().toString(36).slice(-6);
       
-      await email(value.email , `<h1>Reset Password</h1> <p>Your Otp Is:</p><br/><h3>${code}</h3><br/><p>The below Link is valid only for 30 mins. change your Password with in 30 mins</p> <br/> <p>https://flamboyant-mcnulty-6a1292.netlify.app/forgotpassword/${user._id}/verification</p>`);
+      await email(value.email , `<h1>Reset Password</h1> <p>Your Otp Is:</p> <h3>${code}</h3> <p>The below Link to reset your account password is valid only for 30Minutes.</p> 
+      <span><a href="https://flamboyant-mcnulty-6a1292.netlify.app/forgotpassword/${user._id}/verification">Click here</a> to reset your password</span>
+      <P>(or) Use the below link</p>
+      <p>https://flamboyant-mcnulty-6a1292.netlify.app/forgotpassword/${user._id}/verification</p>`);
       await mongo.db.collection('userdetails').updateOne({email:value.email} , {$set:{code: code ,resetpassord: false , time:(value.time +1800000)} })
       res.send({message:"email send successfully"})
       console.log("success")
