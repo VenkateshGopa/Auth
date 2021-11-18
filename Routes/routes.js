@@ -5,7 +5,7 @@ const services = require('../servises/router.services');
 const Router = express.Router();
 
 Router.post('/', (req, res)=>{
-  res.send(<h1> Api </h1>)
+  res.send(Api)
 });
 Router.post('/register', services.register);
 Router.post('/login', services.login);
